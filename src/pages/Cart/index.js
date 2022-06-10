@@ -6,7 +6,9 @@ import { bindActionCreators } from 'redux';
 import * as CartActions from '../../store/modules/cart/actions';
 import { Container, ProductTable, Total } from './styles';
 
-function Cart({ cart, updateAmount, removeToCart }) {
+import { formatPrice } from '../../util/format';
+
+function Cart({ cart, updateAmount, removeToCart, total }) {
 
 
   function increment(product) {
@@ -53,7 +55,7 @@ function Cart({ cart, updateAmount, removeToCart }) {
                   </div>
                 </td>
                 <td>
-                  <strong>R$ 258,80</strong>
+                  <strong>{product.subtotal}</strong>
                 </td>
                 <td>
                   <button
@@ -75,7 +77,7 @@ function Cart({ cart, updateAmount, removeToCart }) {
 
         <Total>
           <span>TOTAL</span>
-          <strong>R$ 1.920,28</strong>
+          <strong>{total}</strong>
         </Total>
       </footer>
     </Container>
@@ -84,7 +86,13 @@ function Cart({ cart, updateAmount, removeToCart }) {
 
 /** permite colocar o state dentro das props do componente */
 const mapStateToProps = state => ({
-  cart: state.cart,
+  cart: state.cart.map(product => ({
+    ...product,
+    subtotal: formatPrice(product.price * product.amount),
+  })),
+  total: formatPrice(state.cart.reduce((total, product) => {
+    return total + product.price * product.amount
+  }, 0)),
 });
 
 /** permite colocar as actions dentro das props do componente */

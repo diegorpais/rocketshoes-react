@@ -9,7 +9,7 @@ import * as CartActions from '../../store/modules/cart/actions';
 
 import { ProductList } from './styles';
 
-function Home({ dispatch, addToCart }) {
+function Home({ amount, addToCart }) {
 
   const [products, setProducts] = useState([]);
 
@@ -43,7 +43,7 @@ function Home({ dispatch, addToCart }) {
 
             <button type='button' onClick={() => handleAddProduct(product)}>
               <div>
-                <MdAddShoppingCart size={16} color="#fff" /> 3
+                <MdAddShoppingCart size={16} color="#fff" />{' '} {amount[product.id] || 0}
               </div>
 
               <span>ADICONAR AO CARRINHO</span>
@@ -59,7 +59,15 @@ function Home({ dispatch, addToCart }) {
   );
 }
 
+/** permite colocar o state dentro das props do componente */
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+    return amount;
+  }, {}),
+});
+
 /** permite colocar as actions dentro das props do componente */
 const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch);
 
-export default connect(null, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

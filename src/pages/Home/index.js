@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { MdAddShoppingCart } from 'react-icons/md';
 import { formatPrice } from '../../util/format';
+import * as CartActions from '../../store/modules/cart/actions';
 
 import { ProductList } from './styles';
 
-function Home(props) {
+function Home({ dispatch, addToCart }) {
 
   const [products, setProducts] = useState([]);
 
@@ -22,12 +24,7 @@ function Home(props) {
   };
 
   const handleAddProduct = product => {
-    const { dispatch } = props;
-
-    dispatch({
-      type: 'ADD_TO_CART',
-      product,
-    });
+    addToCart(product);
   };
 
   useEffect(() => {
@@ -62,5 +59,7 @@ function Home(props) {
   );
 }
 
+/** permite colocar as actions dentro das props do componente */
+const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch);
 
-export default connect()(Home);
+export default connect(null, mapDispatchToProps)(Home);
